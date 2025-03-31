@@ -72,30 +72,32 @@ valor_aproximado = f_interpolada(punto_a_aproximar)
 print(f"Valor aproximado de f(1.5) con interpolación de Lagrange: {valor_aproximado}")
 
 ###############################NEWTON#####################################################
-def polinomioNweton(nodos,valores_f,x):
+def polinomi_Interpolador_de_Nweton(nodos,valores_f,x):
     diferencias_divididas = [valores_f.copy()]
-    grado = len(nodos)
-    polinomio = 0
-    for i in range(1,grado): # i, es el orden de la diferencia dividida
-        fila_actual = [] 
-        for j in range(grado-i):#recorrer los nodos dsiponibles para el orden j
-          diferencia = (diferencias_divididas[i-1][j+1] - diferencias_divididas[i-1][j])/(nodos[j+i]-nodos[j])  
-          fila_actual.append(diferencia)
-        diferencias_divididas.append(fila_actual)
+    grado_n = len(nodos)
+    polinomioDeNewton = 0
+    for i in range(1,grado_n): # i, es el orden de la diferencia dividida
+        la_fila_actual = [] 
+        for j in range(grado_n-i):#recorrer los nodos dsiponibles para el orden j
+          numerador = (diferencias_divididas[i-1][j+1] - diferencias_divididas[i-1][j])
+          denominador = (nodos[j+i]-nodos[j])
+          diferencia = numerador/denominador  
+          la_fila_actual.append(diferencia)
+        diferencias_divididas.append(la_fila_actual)
         
-    polinomio = diferencias_divididas[0][0]# El primer término es f(x0)
+    polinomioDeNewton = diferencias_divididas[0][0]# El primer término es f(x0)
     factor = 1  # Factor de (x - x0), (x - x1), ...
     
     # Añadimos los términos correspondientes
-    for j in range(1, grado):
+    for j in range(1, grado_n):
         factor *= (x - nodos[j-1])  # (x - x0), (x - x1), ...
-        polinomio += diferencias_divididas[j][0] * factor  # Añadimos el término correspondiente al polinomio
+        polinomioDeNewton += diferencias_divididas[j][0] * factor  # Añadimos el término correspondiente al polinomio
     
-    return polinomio
+    return polinomioDeNewton
 
 nodos = [0,1,2]
 valores_f = [-2,1,4]
-resultado = polinomioNweton(nodos, valores_f, x)
+resultado = polinomi_Interpolador_de_Nweton(nodos, valores_f, x)
 print(f"Valor aproximado de f({x}) = {resultado}")
 
 # Punto donde queremos evaluar
