@@ -14,7 +14,7 @@ Created on Sun Mar 30 14:05:17 2025
 # ejemplo: generar una matriz de tipo Vandermonde  
 
 def vandermonde(nodos): 
-    """requiere haber importado numpy as np 
+    """requiere haber importado numpy as np -
     #nodos es un array con los nodos"""
     n = len(nodos) 
     X = np.zeros((n, n)) 
@@ -362,54 +362,42 @@ print(f"La aproximación de la integral definida de exp(x) en el intervalo [0, 1
 ###############################COEFICIENTES INDETERMINADOS DERIVACION#############
 import numpy as np
 
-def aproximar_derivadas(f, n, x0, h):
-    # Definimos los nodos
-    x = np.array([x0 - 2*h, x0 - h, x0, x0 + h, x0 + 2*h])
-    
-    # Calculamos los valores de la función en los nodos
-    f_values = np.array([f(xi) for xi in x])
-    
-    # Coeficientes para las derivadas
+def derivada_fpc(f, n, x0, h):
     if n == 1:
-        # Coeficientes para la primera derivada
-        coef = np.array([-1/12, 2/3, 0, -2/3, 1/12])
+        # Primera derivada cinco puntos
+        derivada = (-f(x0 + 2*h) + 8*f(x0 + h) - 8*f(x0 - h) + f(x0 - 2*h)) / (12*h)
     elif n == 2:
-        # Coeficientes para la segunda derivada
-        coef = np.array([-1/12, 4/3, -5/2, 4/3, -1/12])
+        # Segunda derivada cinco puntos
+        derivada = (-f(x0 + 2*h) + 16*f(x0 + h) - 30*f(x0) + 16*f(x0 - h) - f(x0 - 2*h)) / (12*(h**2))
     elif n == 3:
-        # Coeficientes para la tercera derivada
-        coef = np.array([-1/2, 1, 0, -1, 1/2])
-    else:
-        raise ValueError("El orden de la derivada debe ser 1, 2 o 3")
-    
-    # Aproximamos la derivada
-    derivada = np.sum(coef * f_values) / h**n
-    
+        # Tercera derivada cinco puntos
+        derivada = (f(x0 + 2*h) - 2*f(x0 + h) + 2*f(x0 - h) - f(x0 - 2*h)) / (2*(h**3))
     return derivada
 
-# Ejemplo de uso
-def funcion_ejemplo(x):
-    return x**2 + np.sin(x)
+# f(x) = sin(x)
+def f(x):
+    return np.sin(x)
+x0 = 0 # Punto de evaluaciÃ³n
+h = 0.1 # Incremento
 
-x0 = 1.0
-h = 0.1
+primera_derivada = derivada_fpc(f, 1, x0, h)
+segunda_derivada = derivada_fpc(f, 2, x0, h)
+tercera_derivada = derivada_fpc(f, 3, x0, h)
 
-# Aproximamos la primera derivada
-primera_derivada = aproximar_derivadas(funcion_ejemplo, 1, x0, h)
-print(f"Primera derivada en x0={x0}: {primera_derivada}")
-
-# Aproximamos la segunda derivada
-segunda_derivada = aproximar_derivadas(funcion_ejemplo, 2, x0, h)
-print(f"Segunda derivada en x0={x0}: {segunda_derivada}")
-
-# Aproximamos la tercera derivada
-tercera_derivada = aproximar_derivadas(funcion_ejemplo, 3, x0, h)
-print(f"Tercera derivada en x0={x0}: {tercera_derivada}")
+print(f"Primera derivada (n=1): {primera_derivada:.15f}")
+print(f"Segunda derivada (n=2): {segunda_derivada:.30f}")
+print(f"Tercera derivada (n=3): {tercera_derivada:.15f}")
 
 
-################################################################################
+################################SIMPSION################################################
 """
 EJERCICIO 4
+
+Escribe procedimientos en python para implementar las fórmulas de cuadratura
+compuestas (rectángulo, punto medio, trapecio y Simpson) con n+1 nodos, y aplíquense para
+aproximar el valor de la integral
+
+INTEGRAL [2,0] X^2e^-X^2 dx
 """
 import numpy as np
 import scipy.integrate as spi
