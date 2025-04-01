@@ -7,7 +7,102 @@ Created on Sun Mar 30 14:05:17 2025
 """
 
 #tabla = np.zeros((m, m))  # Matriz vacía con ceros
+#dir(np)
+#pintar graficas import matplotlib.pyplot as plt
 
+"""VANDERMOD"""
+# ejemplo: generar una matriz de tipo Vandermonde  
+
+def vandermonde(nodos): 
+    """requiere haber importado numpy as np 
+    #nodos es un array con los nodos"""
+    n = len(nodos) 
+    X = np.zeros((n, n)) 
+    for j in range(n): #iteración columnas
+        for i in range(n): #iteración filas
+            X[i, j] = nodos[j] ** i #coge el punto xj y lo eleva al indice fila
+    M = np.asmatrix(X) #convierte a matrix
+    return(M) #devuelve matrix
+
+vandermonde([2,3,4])
+#####################FACTORIAL#######################################
+import math
+
+numero = 5
+resultado = math.factorial(numero)
+print(resultado)
+#DESCOMPONER EN FACTORES PRIMOS
+from sympy import factorint
+
+numero = 60
+factores = factorint(numero)
+print(factores)
+
+
+#######################################RAICES########################################
+
+"""
+    Escribe un procedimiento para calcular las raíces reales de una ecuación de segundo grado que
+    permita utilizar las fórmulas adecuadas, según el valor de b, para evitar diferencias entre valores
+    próximos, tal y como se ha visto en clase de teoría.
+    
+"""
+import math as mt
+
+def funcion_doblegrado(a, b, c):#ecuacion segundo grado
+    """
+    hay que meter 3 numeros a,b,c.
+    a= será x^2,b = x, c = termino independiente
+    creamos una lista vacia para guardar los resultados.
+    comprobamos cada cosa, si la a = 0 y b =0 no es una ecuacion
+    si a == 0 es eciacion de primer grado.
+    
+    else: empezamos a clcular el discriminanto (lo que está dentro de la raiz)
+    hacemos 3 comprobaciones mas, si discriminante es < 0 no se puede ya que no hay raices negativas
+    si > 0 la reiz tiene dos soluciones.
+    
+    """
+    lista_doblegrado = []
+    if (a == 0 and b == 0):
+        print("No es una ecuacion")
+        print(lista_doblegrado)
+    elif (a == 0):
+        print("Es una ecuacion de primer grado")
+    else:
+        discriminante = b**2 - 4*a*c
+        multi = 2*a
+        if(discriminante < 0):
+            print("La ecuacion no tiene raices reales")
+        elif(discriminante == 0):
+            print("Posee raiz doble")
+            x=-b/2*a
+            lista_doblegrado.append(x)
+            print(lista_doblegrado)
+        else:
+            if(b > 0):
+                x1 = multi / (-b - mt.sqrt(discriminante))
+                x2 = (-b - mt.sqrt(discriminante)) / multi
+                lista_doblegrado.append(x1)
+                lista_doblegrado.append(x2)
+                print(lista_doblegrado)
+            elif(b < 0):
+                x1 = (-b + mt.sqrt(discriminante)) / multi
+                x2 = multi / (-b + mt.sqrt(discriminante))
+                lista_doblegrado.append(x1)
+                lista_doblegrado.append(x2)
+                print(lista_doblegrado)
+                
+#(1) x2 + 12345678987x + 1 = 0.
+funcion_doblegrado(1, 12345678987, 1)
+
+#(2) x2 − 12345678987x + 1 = 0.
+funcion_doblegrado(1, -12345678987, 1)
+
+#(3) x2 − 4x + 4 = 0.
+funcion_doblegrado(1, -4, 4)
+
+#(4) x2 − 4x + 5 = 0.
+funcion_doblegrado(1, -4, 5)
 ##############################TYLOR#########################################################
 "tenemos que importar todo lo de sympy para poder usar funciones como sin() o symbols("")."
 "al poner .remove() estamos eliminando de orden superior dejando solo la expansion"
@@ -53,6 +148,9 @@ polinomio_interpolador = polinomio_lagrange(nodos, valores_f)
 print("Polinomio interpolador de Lagrange:")
 print(polinomio_interpolador)
 help(polinomio_lagrange)
+# Evaluación del polinomio en un punto específico
+punto = 3  # Por ejemplo, evaluamos en x = 3
+evaluacion = polinomio_interpolador.subs(x, punto)
 
 """otra forma de usar lagrande es con la libreria scipy"""
 from scipy import interpolate
@@ -167,7 +265,7 @@ print(f"Valor aproximado de f({x_aproximar}) = {resultado}")
 
 ##-------------------------------------------
 import numpy as np
-
+import math
 def tabla_diferencias_divididas_hermite(nodos, valores_f, derivadas_f):
     n = len(nodos)
     m = 2 * n  # Duplicamos cada nodo en la tabla
@@ -209,4 +307,232 @@ x_expandido, tabla = tabla_diferencias_divididas_hermite(nodos, valores_f, deriv
 import pandas as pd
 df = pd.DataFrame(tabla, index=x_expandido)
 print(df)
+
+#############################COEFINIENTES INDETERMINADOS Integracion########################
+
+import numpy as np
+import sympy as sp
+import math
+def tres_octavos(f, a, b):
+    # Definimos los nodos
+    x0 = a
+    x1 = (2*a + b) / 3
+    x2 = (a + 2*b) / 3
+    x3 = b
+    
+    # Planteamos el sistema de ecuaciones para los coeficientes
+    A = np.array([
+        [1, 1, 1, 1],
+        [x0, x1, x2, x3],
+        [x0**2, x1**2, x2**2, x3**2],
+        [x0**3, x1**3, x2**3, x3**3]
+    ])
+    
+    B = np.array([
+        b - a,
+        (b**2 - a**2) / 2,
+        (b**3 - a**3) / 3,
+        (b**4 - a**4) / 4
+    ])
+    
+    # Resolvemos el sistema de ecuaciones
+    coeficientes = np.linalg.solve(A, B)
+    
+    # Definimos la fórmula de tres octavos
+    integral = (coeficientes[0] * f(x0) + coeficientes[1] * f(x1) + coeficientes[2] * f(x2) + coeficientes[3] * f(x3))
+    
+    return integral
+# Ejemplo de uso
+def f(x):
+    return x
+
+def ff(x):
+    return sp.cos(x)
+
+def fff(x):
+    return sp.exp(x)
+resultado = tres_octavos(f, 0, 1)
+resultado2 = tres_octavos(ff, -math.pi/2, math.pi/2)
+resultado3 = tres_octavos(fff, 0, 1)
+print(f"La aproximación de la integral definida de x en el intervalo [0, 1] es: {resultado:.15f}")
+print(f"La aproximación de la integral definida de cos(x) en el intervalo [-pi/2, pi/2] es: {resultado2:.15f}")
+print(f"La aproximación de la integral definida de exp(x) en el intervalo [0, 1] es: {resultado3:.15f}")
+
+
+###############################COEFICIENTES INDETERMINADOS DERIVACION#############
+import numpy as np
+
+def aproximar_derivadas(f, n, x0, h):
+    # Definimos los nodos
+    x = np.array([x0 - 2*h, x0 - h, x0, x0 + h, x0 + 2*h])
+    
+    # Calculamos los valores de la función en los nodos
+    f_values = np.array([f(xi) for xi in x])
+    
+    # Coeficientes para las derivadas
+    if n == 1:
+        # Coeficientes para la primera derivada
+        coef = np.array([-1/12, 2/3, 0, -2/3, 1/12])
+    elif n == 2:
+        # Coeficientes para la segunda derivada
+        coef = np.array([-1/12, 4/3, -5/2, 4/3, -1/12])
+    elif n == 3:
+        # Coeficientes para la tercera derivada
+        coef = np.array([-1/2, 1, 0, -1, 1/2])
+    else:
+        raise ValueError("El orden de la derivada debe ser 1, 2 o 3")
+    
+    # Aproximamos la derivada
+    derivada = np.sum(coef * f_values) / h**n
+    
+    return derivada
+
+# Ejemplo de uso
+def funcion_ejemplo(x):
+    return x**2 + np.sin(x)
+
+x0 = 1.0
+h = 0.1
+
+# Aproximamos la primera derivada
+primera_derivada = aproximar_derivadas(funcion_ejemplo, 1, x0, h)
+print(f"Primera derivada en x0={x0}: {primera_derivada}")
+
+# Aproximamos la segunda derivada
+segunda_derivada = aproximar_derivadas(funcion_ejemplo, 2, x0, h)
+print(f"Segunda derivada en x0={x0}: {segunda_derivada}")
+
+# Aproximamos la tercera derivada
+tercera_derivada = aproximar_derivadas(funcion_ejemplo, 3, x0, h)
+print(f"Tercera derivada en x0={x0}: {tercera_derivada}")
+
+
+################################################################################
+"""
+EJERCICIO 4
+"""
+import numpy as np
+import scipy.integrate as spi
+import sympy as sp
+
+# Definición de la función
+def f(x):
+    return x**2 * np.exp(-x**2)
+
+# Procedimiento para la fórmula del rectángulo compuesto
+def rectangulo_compuesto(f, a, b, n):
+    h = (b - a) / n
+    integral = 0
+    for i in range(n):
+        integral += f(a + i*h) * h
+    return integral
+
+# Procedimiento para la fórmula del punto medio compuesto
+def punto_medio_compuesto(f, a, b, n):
+    h = (b - a) / n
+    integral = 0
+    for i in range(n):
+        integral += f(a + (i + 0.5)*h) * h
+    return integral
+
+# Procedimiento para la fórmula del trapecio compuesto
+def trapecio_compuesto(f, a, b, n):
+    h = (b - a) / n
+    integral = (f(a) + f(b)) / 2
+    for i in range(1, n):
+        integral += f(a + i*h)
+    integral *= h
+    return integral
+
+# Procedimiento para la fórmula de Simpson compuesta
+def simpson_compuesto(f, a, b, n):
+    if n % 2 == 1:
+        raise ValueError("El número de subintervalos debe ser par para la fórmula de Simpson.")
+    h = (b - a) / n
+    integral = f(a) + f(b)
+    for i in range(1, n, 2):
+        integral += 4 * f(a + i*h)
+    for i in range(2, n-1, 2):
+        integral += 2 * f(a + i*h)
+    integral *= h / 3
+    return integral
+
+# Parámetros del problema
+a = 0
+b = 2
+n = 8
+
+# Cálculo de las aproximaciones con las fórmulas compuestas
+rectangulo_resultado = rectangulo_compuesto(f, a, b, n)
+punto_medio_resultado = punto_medio_compuesto(f, a, b, n)
+trapecio_resultado = trapecio_compuesto(f, a, b, n)
+simpson_resultado = simpson_compuesto(f, a, b, n)
+
+# Cálculo del valor exacto con sympy
+x = sp.Symbol('x')
+integral_exacta = sp.integrate(x**2 * sp.exp(-x**2), (x, a, b))
+
+# Cálculo del valor aproximado con scipy
+integral_scipy, _ = spi.quad(f, a, b)
+
+# Resultados
+print(f"Aproximación con la fórmula del rectángulo compuesto: {rectangulo_resultado:.15f}")
+print(f"Aproximación con la fórmula del punto medio compuesto: {punto_medio_resultado:.15f}")
+print(f"Aproximación con la fórmula del trapecio compuesto: {trapecio_resultado:.15f}")
+print(f"Aproximación con la fórmula de Simpson compuesta: {simpson_resultado:.15f}")
+print(f"Valor exacto calculado con sympy: {integral_exacta.evalf()}")
+print(f"Valor aproximado calculado con scipy: {integral_scipy}")
+
+#################################################################################
+import numpy as np
+import math
+from math import sin, factorial
+
+def derivacion_cincoPuntos(f, n, x0, h):
+    """
+    Aproxima la derivada de orden n (n=1,2,3) de la función f en x0
+    usando la fórmula central de 5 puntos con coeficientes indeterminados.
+    
+    la formula de la primera derivada:
+        siendo h la distancia entre puntos
+        f(x) = −f(xi−2)+8f(xi−1)−8f(xi+1)+f(xi+2)/12h
+​
+
+    """
+    if n not in [1, 2, 3]:
+        raise ValueError("El orden de derivación n debe ser 1, 2 o 3.")
+
+    # Desplazamientos
+    d = np.array([-2, -1, 0, 1, 2], dtype=float)
+    nodes = x0 + h*d
+
+    # Matriz de Vandermonde
+    V = np.array([[d_i**j for d_i in d] for j in range(5)])
+
+    # Vector de la derecha
+    b = np.zeros(5)
+    b[n] = math.factorial(n) / (h**n)
+
+    # Coeficientes A
+    A = np.linalg.solve(V, b)
+
+    # f(nodes) con list comprehension si f es escalar
+    fvals = [f(val) for val in nodes]
+
+    # Producto punto
+    deriv_approx = np.dot(A, fvals)
+    return deriv_approx
+
+# Probamos
+x0 = 0
+h = 0.1
+
+deriv1 = derivacion_cincoPuntos(sin, 1, x0, h)
+deriv2 = derivacion_cincoPuntos(sin, 2, x0, h)
+deriv3 = derivacion_cincoPuntos(sin, 3, x0, h)
+
+print("Primera derivada (n=1) =", deriv1)
+print(f"Segunda derivada (n=2) = {deriv2:.15f}")
+print("Tercera derivada (n=3) =", deriv3)
+
 
