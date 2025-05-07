@@ -32,10 +32,7 @@ from sympy.matrices import *
 #La sustitución progresiva es un método para resolver un sistema de ecuaciones 
 #lineales cuando la matriz es triangular inferior
 
-def esDiagonalSuperior(M,posicion):
-    if M[p] != 0:
-        return 0
-    esDiagonalSuperior(M,posicion +1)
+
     
 
 def sistemaLineal(M):
@@ -59,8 +56,14 @@ def sistemaLineal(M):
             return()
         else:
             for i in range(k +1, orden):
-                L[i,k]=U[i,k]/U[k,k]
-                U[i,k]=0
+                L[i,k]= U[i,k]/U[k,k]
+                U[i,k]= 0
+    
+    print(f"{U}")
+
+sistemaLineal([[2,2],[2,2]])
+                
+            
                 
         
         
